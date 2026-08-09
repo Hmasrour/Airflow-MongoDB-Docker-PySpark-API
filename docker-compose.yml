@@ -1,0 +1,13 @@
+services:
+
+
+  transform-weather:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transform_weather
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./data:/app/data
+    profiles:
+      - jobs
