@@ -1,3 +1,4 @@
 pyspark==4.2.0
 python-dotenv
 pymongo #for mongodb
+requests

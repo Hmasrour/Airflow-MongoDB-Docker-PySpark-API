@@ -15,6 +15,7 @@ Run:
 
 import logging
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -404,7 +405,16 @@ def write_silver_parquet(df: DataFrame, output_dir: Path) -> None:
     """
     Write the final Silver DataFrame as Parquet, overwriting any
     existing output (initial-version behavior).
+
+    The output directory is deleted and recreated manually before
+    writing, so Spark does not need to clear it via the Hadoop
+    filesystem API (which can fail on permission mismatches
+    between different Docker container users).
     """
+
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
+        logger.info(f"Cleared existing output directory: {output_dir}")
 
     output_dir.mkdir(parents=True, exist_ok=True)
 

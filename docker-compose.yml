@@ -1,5 +1,145 @@
+# ==============================================================
+# Docker Compose – Weather ETL Pipeline with Airflow
+# ==============================================================
+#
+# Services:
+#   postgres            – Airflow metadata database
+#   airflow-init        – One-shot: DB init + admin user creation
+#   airflow-webserver   – Airflow UI on port 8080
+#   airflow-scheduler   – Runs DAGs and tasks (LocalExecutor)
+#   mongodb             – Weather data store (Gold layer)
+#   transform-weather   – Standalone PySpark job (jobs profile)
+#   load-mongodb        – Standalone MongoDB loader (jobs profile)
+#
+# Quick start:
+#   docker compose up --build -d
+#   Open http://localhost:8080  (login: airflow / airflow)
+# ==============================================================
+
+
+# --------------------------------------------------------------
+# Shared Airflow configuration (YAML anchor)
+# --------------------------------------------------------------
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  user: root
+  environment:
+    - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    - AIRFLOW__CORE__FERNET_KEY=
+    - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./src:/opt/airflow/src
+    - ./data:/opt/airflow/data
+    - ./.env:/opt/airflow/.env:ro
+    - airflow_logs:/opt/airflow/logs
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+
+# ==============================================================
+# Services
+# ==============================================================
 services:
 
+  # ------------------------------------------------------------
+  # PostgreSQL – Airflow metadata database
+  # ------------------------------------------------------------
+  postgres:
+    image: postgres:16
+    container_name: airflow_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ------------------------------------------------------------
+  # Airflow Init – one-shot DB migration + admin user creation
+  # ------------------------------------------------------------
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow_init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate &&
+        airflow users create \
+          --username airflow \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com \
+          --password airflow || true
+    restart: "no"
+
+  # ------------------------------------------------------------
+  # Airflow Webserver – UI on port 8080
+  # ------------------------------------------------------------
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow_webserver
+    command: airflow webserver
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ------------------------------------------------------------
+  # Airflow Scheduler – runs DAGs (LocalExecutor)
+  # ------------------------------------------------------------
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow_scheduler
+    command: airflow scheduler
+    restart: unless-stopped
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname $(hostname) || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ------------------------------------------------------------
+  # MongoDB – Gold layer data store
+  # ------------------------------------------------------------
+  mongodb:
+    image: mongo:7
+    container_name: weather_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  # ------------------------------------------------------------
+  # Standalone PySpark transformation job (manual runs)
+  # Usage: docker compose --profile jobs run transform-weather
+  # ------------------------------------------------------------
   transform-weather:
     build:
       context: .
@@ -11,15 +151,10 @@ services:
     profiles:
       - jobs
 
-  mongodb:
-    image: mongo:7
-    container_name: weather_mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-
+  # ------------------------------------------------------------
+  # Standalone MongoDB loader job (manual runs)
+  # Usage: docker compose --profile jobs run load-mongodb
+  # ------------------------------------------------------------
   load-mongodb:
     build:
       context: .
@@ -34,5 +169,11 @@ services:
     profiles:
       - jobs
 
+
+# ==============================================================
+# Named volumes
+# ==============================================================
 volumes:
+  postgres_data:
   mongodb_data:
+  airflow_logs:
