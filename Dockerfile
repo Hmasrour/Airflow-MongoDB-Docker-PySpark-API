@@ -1,6 +1,10 @@
-# Dockerfile.transform
+# Dockerfile
 #
-# Runs the Bronze -> Silver PySpark transformation job.
+# Shared image for the Bronze -> Silver PySpark transformation job
+# and the Silver -> Gold MongoDB loading job. Both jobs need the
+# same Python + PySpark + Java runtime, so one image is reused for
+# both `docker compose run` commands (see docker-compose.yml).
+#
 # Place this file at the project root (next to docker-compose.yml).
 
 FROM python:3.11-slim
@@ -35,4 +39,6 @@ COPY src/ ./src/
 # docker-compose.yml) rather than baked into the image, so the
 # container always sees your current local data and config.
 
+# Default command runs the transformation job. The MongoDB loader
+# overrides this via `command:` in docker-compose.yml.
 CMD ["python", "src/transformation/transform_weather.py"]

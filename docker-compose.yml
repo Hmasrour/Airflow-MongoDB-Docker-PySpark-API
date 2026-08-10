@@ -1,6 +1,5 @@
 services:
 
-
   transform-weather:
     build:
       context: .
@@ -11,3 +10,29 @@ services:
       - ./data:/app/data
     profiles:
       - jobs
+
+  mongodb:
+    image: mongo:7
+    container_name: weather_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  load-mongodb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: load_mongodb
+    depends_on:
+      - mongodb
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./data:/app/data
+    command: ["python", "src/loading/weather/load_mongodb.py"]
+    profiles:
+      - jobs
+
+volumes:
+  mongodb_data:
