@@ -1,0 +1,195 @@
+[
+    {
+        "coord": {
+            "lon": -6.8416,
+            "lat": 34.0209
+        },
+        "weather": [
+            {
+                "id": 800,
+                "main": "Clear",
+                "description": "clear sky",
+                "icon": "01d"
+            }
+        ],
+        "base": "stations",
+        "main": {
+            "temp": 24.82,
+            "feels_like": 25.13,
+            "temp_min": 24.82,
+            "temp_max": 24.82,
+            "pressure": 1016,
+            "humidity": 68,
+            "sea_level": 1016,
+            "grnd_level": 1010
+        },
+        "visibility": 10000,
+        "wind": {
+            "speed": 3.96,
+            "deg": 323,
+            "gust": 3.8
+        },
+        "clouds": {
+            "all": 0
+        },
+        "dt": 1786373478,
+        "sys": {
+            "country": "MA",
+            "sunrise": 1786340710,
+            "sunset": 1786389627
+        },
+        "timezone": 3600,
+        "id": 7456416,
+        "name": "Medina De Rabat",
+        "cod": 200,
+        "city": "Rabat",
+        "latitude": 34.0209,
+        "longitude": -6.8416,
+        "ingestion_timestamp": "2026-08-10T15:00:01.782647"
+    },
+    {
+        "coord": {
+            "lon": -7.5898,
+            "lat": 33.5731
+        },
+        "weather": [
+            {
+                "id": 800,
+                "main": "Clear",
+                "description": "clear sky",
+                "icon": "01d"
+            }
+        ],
+        "base": "stations",
+        "main": {
+            "temp": 25.55,
+            "feels_like": 25.96,
+            "temp_min": 25.55,
+            "temp_max": 25.55,
+            "pressure": 1016,
+            "humidity": 69,
+            "sea_level": 1016,
+            "grnd_level": 1005
+        },
+        "visibility": 10000,
+        "wind": {
+            "speed": 3.58,
+            "deg": 30
+        },
+        "clouds": {
+            "all": 0
+        },
+        "dt": 1786373500,
+        "sys": {
+            "type": 2,
+            "id": 47681,
+            "country": "MA",
+            "sunrise": 1786340936,
+            "sunset": 1786389761
+        },
+        "timezone": 3600,
+        "id": 2543412,
+        "name": "Le Polo",
+        "cod": 200,
+        "city": "Casablanca",
+        "latitude": 33.5731,
+        "longitude": -7.5898,
+        "ingestion_timestamp": "2026-08-10T15:00:02.935452"
+    },
+    {
+        "coord": {
+            "lon": -7.9811,
+            "lat": 31.6295
+        },
+        "weather": [
+            {
+                "id": 800,
+                "main": "Clear",
+                "description": "clear sky",
+                "icon": "01d"
+            }
+        ],
+        "base": "stations",
+        "main": {
+            "temp": 37.15,
+            "feels_like": 36.19,
+            "temp_min": 37.15,
+            "temp_max": 37.15,
+            "pressure": 1013,
+            "humidity": 23,
+            "sea_level": 1013,
+            "grnd_level": 960
+        },
+        "visibility": 10000,
+        "wind": {
+            "speed": 3.71,
+            "deg": 330,
+            "gust": 2.87
+        },
+        "clouds": {
+            "all": 0
+        },
+        "dt": 1786373524,
+        "sys": {
+            "country": "MA",
+            "sunrise": 1786341222,
+            "sunset": 1786389662
+        },
+        "timezone": 3600,
+        "id": 2542997,
+        "name": "Marrakesh",
+        "cod": 200,
+        "city": "Marrakech",
+        "latitude": 31.6295,
+        "longitude": -7.9811,
+        "ingestion_timestamp": "2026-08-10T15:00:04.078473"
+    },
+    {
+        "coord": {
+            "lon": -5.834,
+            "lat": 35.7595
+        },
+        "weather": [
+            {
+                "id": 800,
+                "main": "Clear",
+                "description": "clear sky",
+                "icon": "01d"
+            }
+        ],
+        "base": "stations",
+        "main": {
+            "temp": 31.06,
+            "feels_like": 32.33,
+            "temp_min": 31.06,
+            "temp_max": 31.06,
+            "pressure": 1015,
+            "humidity": 48,
+            "sea_level": 1015,
+            "grnd_level": 1010
+        },
+        "visibility": 10000,
+        "wind": {
+            "speed": 3.8,
+            "deg": 311,
+            "gust": 3.96
+        },
+        "clouds": {
+            "all": 0
+        },
+        "dt": 1786373526,
+        "sys": {
+            "country": "MA",
+            "sunrise": 1786340286,
+            "sunset": 1786389568
+        },
+        "timezone": 3600,
+        "id": 6546249,
+        "name": "Tanger-Medina",
+        "cod": 200,
+        "city": "Tangier",
+        "latitude": 35.7595,
+        "longitude": -5.834,
+        "ingestion_timestamp": "2026-08-10T15:00:05.224853"
+    }
+]
